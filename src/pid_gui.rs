@@ -23,7 +23,7 @@ pub fn show() {
     h_main_box.add(&pid_values_box);
     h_main_box.add(&button);
     
-    // P
+    // P - Entry and Label
     let p_value = Entry::new();
     let p_label = Label::new_with_mnemonic(Some("P:"));
     p_value.set_alignment(ALIGN_RIGHT);
@@ -31,7 +31,7 @@ pub fn show() {
     pid_values_box.add(&p_label);
     pid_values_box.add(&p_value);
 
-    // I
+    // I - Entry and Label
     let i_value = Entry::new();
     let i_label = Label::new_with_mnemonic(Some("I:"));
     i_value.set_alignment(ALIGN_RIGHT);
@@ -39,7 +39,7 @@ pub fn show() {
     pid_values_box.add(&i_label);
     pid_values_box.add(&i_value);
     
-    // D
+    // D - Entry and Label
     let d_value = Entry::new();
     let d_label = Label::new_with_mnemonic(Some("D:"));
     d_value.set_alignment(ALIGN_RIGHT);
@@ -52,6 +52,7 @@ pub fn show() {
     main_window.add(&h_main_box);
     main_window.show_all();
 
+    // adding events
     main_window.connect_delete_event(|_, _| {
         gtk::main_quit();
         Inhibit(false)
