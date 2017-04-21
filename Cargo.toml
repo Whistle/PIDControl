@@ -1,0 +1,10 @@
+[package]
+name = "pid_control"
+version = "0.1.0"
+authors = ["Dominic Prass <dominic.prass@googlemail.com>"]
+
+[dependencies]
+
+[dependencies.gtk]
+version = "0.1.2"
+features = ["v3_10"]
