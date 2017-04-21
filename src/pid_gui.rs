@@ -1,10 +1,10 @@
 extern crate gtk;
 
 use gtk::prelude::*;
-use gtk::{Label, Orientation, Box, Button, Window, WindowType, Entry};
+use gtk::{ScrolledWindow, TextView, Label, Orientation, Box, Button, Window, WindowType, Entry};
 
-const WINDOW_WIDTH = 350;
-const WINDOW_HEIGHT = 70;
+const WINDOW_WIDTH: i32 = 350;
+const WINDOW_HEIGHT: i32 = 150;
 const ALIGN_RIGHT: f32 = 1f32;
 
 pub fn show() {
@@ -46,6 +46,17 @@ pub fn show() {
 
     pid_values_box.add(&d_label);
     pid_values_box.add(&d_value);
+
+    // TextView
+    let debug_scrolled = ScrolledWindow::new(None, None);
+    debug_scrolled.set_hexpand(true);
+    debug_scrolled.set_vexpand(true);
+    let debug_view = TextView::new();
+    let buffer = debug_view.get_buffer();
+    debug_view.set_editable(false);
+    debug_view.set_cursor_visible(false);
+    debug_scrolled.add(&debug_view);
+    h_main_box.add(&debug_scrolled);
     
 
     // show window
