@@ -3,7 +3,9 @@ extern crate gtk;
 use gtk::prelude::*;
 use gtk::{Label, Orientation, Box, Button, Window, WindowType, Entry};
 
-const  ALIGN_RIGHT: f32 = 1f32;
+const WINDOW_WIDTH = 350;
+const WINDOW_HEIGHT = 70;
+const ALIGN_RIGHT: f32 = 1f32;
 
 pub fn show() {
     if gtk::init().is_err() {
@@ -12,7 +14,7 @@ pub fn show() {
     }
     let main_window = Window::new(WindowType::Toplevel);
     main_window.set_title("PID Control v0.42");
-    main_window.set_default_size(350, 70);
+    main_window.set_default_size(WINDOW_WIDTH, WINDOW_HEIGHT);
 
     let button = Button::new_with_label("Update Controller");
 
