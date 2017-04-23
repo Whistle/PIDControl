@@ -2,9 +2,10 @@ extern crate gtk;
 
 use gtk::prelude::*;
 use gtk::{ScrolledWindow, TextView, Label, Orientation, Box, Button, Window, WindowType, Entry};
+use serial_communication::*;
 
-const WINDOW_WIDTH: i32 = 350;
-const WINDOW_HEIGHT: i32 = 150;
+const WINDOW_WIDTH: i32 = 850;
+const WINDOW_HEIGHT: i32 = 350;
 const ALIGN_RIGHT: f32 = 1f32;
 
 pub fn show() {
@@ -16,16 +17,21 @@ pub fn show() {
     main_window.set_title("PID Control v0.42");
     main_window.set_default_size(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    let button = Button::new_with_label("Update Controller");
+    let btn_update = Button::new_with_label("Update Controller");
+    let btn_connect = Button::new_with_label("Connect");
+    btn_connect.set_size_request(100, 30);
 
     let pid_values_box = Box::new(Orientation::Horizontal, 6);
     let h_main_box = Box::new(Orientation::Vertical, 6);
     h_main_box.add(&pid_values_box);
-    h_main_box.add(&button);
+    h_main_box.add(&btn_connect);
+
+    pid_values_box.add(&btn_update);
     
     // P - Entry and Label
     let p_value = Entry::new();
     let p_label = Label::new_with_mnemonic(Some("P:"));
+    p_value.set_width_chars(5);
     p_value.set_alignment(ALIGN_RIGHT);
 
     pid_values_box.add(&p_label);
@@ -34,6 +40,7 @@ pub fn show() {
     // I - Entry and Label
     let i_value = Entry::new();
     let i_label = Label::new_with_mnemonic(Some("I:"));
+    i_value.set_width_chars(5);
     i_value.set_alignment(ALIGN_RIGHT);
 
     pid_values_box.add(&i_label);
@@ -42,6 +49,7 @@ pub fn show() {
     // D - Entry and Label
     let d_value = Entry::new();
     let d_label = Label::new_with_mnemonic(Some("D:"));
+    d_value.set_width_chars(5);
     d_value.set_alignment(ALIGN_RIGHT);
 
     pid_values_box.add(&d_label);
@@ -52,7 +60,6 @@ pub fn show() {
     debug_scrolled.set_hexpand(true);
     debug_scrolled.set_vexpand(true);
     let debug_view = TextView::new();
-    let buffer = debug_view.get_buffer();
     debug_view.set_editable(false);
     debug_view.set_cursor_visible(false);
     debug_scrolled.add(&debug_view);
@@ -69,8 +76,12 @@ pub fn show() {
         Inhibit(false)
     });
 
-    button.connect_clicked(|_| {
+    btn_update.connect_clicked(|_| {
         println!("refreshing pid values...");
+    });
+
+    btn_connect.connect_clicked(|_| {
+        connect();
     });
 
     gtk::main(); 
