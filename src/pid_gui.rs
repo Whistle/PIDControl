@@ -4,6 +4,10 @@ use gtk::prelude::*;
 use gtk::{ScrolledWindow, TextView, Label, Orientation, Box, Button, Window, WindowType, Entry};
 use serial_communication::*;
 
+use std::sync::mpsc::{Sender, Receiver};
+use std::sync::mpsc::channel;
+use std::thread;
+
 const WINDOW_WIDTH: i32 = 850;
 const WINDOW_HEIGHT: i32 = 350;
 const ALIGN_RIGHT: f32 = 1f32;
@@ -13,6 +17,7 @@ pub fn show() {
         println!("Failed to initialize GTK.");
         return;
     }
+
     let main_window = Window::new(WindowType::Toplevel);
     main_window.set_title("PID Control v0.42");
     main_window.set_default_size(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -64,7 +69,14 @@ pub fn show() {
     debug_view.set_cursor_visible(false);
     debug_scrolled.add(&debug_view);
     h_main_box.add(&debug_scrolled);
-    
+
+    let (tx, rx): (Sender<String>, Receiver<String>) = channel();
+    thread::spawn(move || {
+        loop {
+            println!("{}", rx.recv().unwrap());
+        }
+
+    });
 
     // show window
     main_window.add(&h_main_box);
@@ -80,8 +92,8 @@ pub fn show() {
         println!("refreshing pid values...");
     });
 
-    btn_connect.connect_clicked(|_| {
-        connect();
+    btn_connect.connect_clicked(move |_| {
+        connect(tx.clone());
     });
 
     gtk::main(); 

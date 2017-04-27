@@ -4,7 +4,7 @@ use std::time::Duration;
 use serial::prelude::*;
 use std::io::{BufReader, BufRead};
 use std::thread;
-
+use std::sync::mpsc::Sender;
 
 const SETTINGS: serial::PortSettings = serial::PortSettings {
     baud_rate:    serial::Baud115200,
@@ -14,30 +14,30 @@ const SETTINGS: serial::PortSettings = serial::PortSettings {
     flow_control: serial::FlowNone
 };
 
-pub fn connect() {
-    let mut port = serial::open("/dev/ttyACM0");
+pub fn connect(tx: Sender<String>) {
+    let port = serial::open("/dev/ttyACM0");
 
     if port.is_ok() {
-        let thread_handle = thread::spawn(move ||{
-            interact(&mut port.unwrap());
+        thread::spawn(move ||{
+            interact(&mut port.unwrap(), tx.clone());
         });
     } else {
-        println!("Error connecting..");
+        tx.send(String::from("Unable to open port"));
     }
 }
 
-fn interact<T: SerialPort>(port: &mut T) -> serial::Result<()> {
+fn interact(port: &mut SerialPort, tx: Sender<String>) -> serial::Result<()> {
     try!(port.configure(&SETTINGS));
     try!(port.set_timeout(Duration::from_secs(10)));
 
-    let mut buf: Vec<u8> = (0..255).collect();
-
-    //try!(port.read(&mut buf[..])
     let mut line = String::new();
     let mut file = BufReader::new(port);
-    while true {
-        file.read_line(&mut line);
-        println!("{}", &mut line);
+
+    while file.read_line(&mut line).is_ok() {
+        print!("{}", &mut line);
+        tx.send(String::from("hallo"));
+        line.clear();
     }
+    
     Ok(())
 }
